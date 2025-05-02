@@ -4,20 +4,5 @@
   "installCommand": "npm install",
   "framework": "vite",
   "devCommand": "npm run dev",
-  "github": {
-    "silent": true
-  },
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':!README.md'",
-  "env": {
-    "ENABLE_DB_SETUP": {
-      "type": "parameter",
-      "description": "Enable database setup on first deployment",
-      "default": "true"
-    }
-  },
-  "git": {
-    "deploymentEnabled": {
-      "main": true
-    }
-  }
-} 
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':!README.md'"
+}
