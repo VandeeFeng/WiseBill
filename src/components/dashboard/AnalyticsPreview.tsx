@@ -80,7 +80,7 @@ export function AnalyticsPreview() {
       const monthlySpending = transactions.reduce((acc: { [key: string]: number }, curr) => {
         const month = formatDate(curr.消费时间)
         if (month !== 'Invalid date') {
-          acc[month] = (acc[month] || 0) + curr.消费金额
+          acc[month] = (acc[month] || 0) + parseFloat(String(curr.消费金额) || '0')
         }
         return acc
       }, {})

@@ -116,12 +116,12 @@ export function Analytics() {
   useEffect(() => {
     async function loadData() {
       const transactions = await getTransactions(authorKey || undefined)
-      
+
       // Process monthly data
       const monthlySpending = transactions.reduce((acc: { [key: string]: number }, curr) => {
         const month = formatDate(curr.消费时间)
         if (month !== 'Invalid date') {
-          acc[month] = (acc[month] || 0) + curr.消费金额
+          acc[month] = (acc[month] || 0) + parseFloat(String(curr.消费金额) || '0')
         }
         return acc
       }, {})
@@ -132,14 +132,14 @@ export function Analytics() {
       // Process category data
       const categorySpending = transactions.reduce((acc: { [key: string]: number }, curr) => {
         const category = curr.消费用途 || 'Other'
-        acc[category] = (acc[category] || 0) + curr.消费金额
+        acc[category] = (acc[category] || 0) + parseFloat(String(curr.消费金额) || '0')
         return acc
       }, {})
 
       const sortedCategories = Object.entries(categorySpending)
         .sort((a, b) => b[1] - a[1])
 
-      setChartData({
+      const newChartData = {
         monthlyData: {
           labels: sortedMonths.map(([month]) => month),
           datasets: [{
@@ -171,7 +171,9 @@ export function Analytics() {
             borderWidth: 1,
           }]
         }
-      })
+      };
+
+      setChartData(newChartData)
     }
 
     loadData()
