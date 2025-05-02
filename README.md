@@ -2,6 +2,8 @@
 
 WiseBill is a modern personal finance management application built with React and TypeScript. It helps users track expenses, analyze spending patterns, and manage their financial health through an intuitive and visually appealing interface.
 
+Integrate this [shortcut](https://www.icloud.com/shortcuts/f61df2c45b6843e690fcd131ed903bd6) to automatically record and store expense data in the database.
+
 ## Features
 
 - **Dashboard Overview**: Get a quick snapshot of your financial health, including total balance, monthly spending, and savings.
@@ -49,6 +51,9 @@ WiseBill is a modern personal finance management application built with React an
    INITIAL_AUTHOR_KEY=YourSecretKey
    # Optional: set to 'true' to update an existing author key
    UPDATE_AUTHOR_KEY=false
+   # Set to 'true' to enable database setup on first deployment
+   # Set to 'false' for subsequent deployments
+   ENABLE_DB_SETUP=true
    ```
 
 4. Initialize the database with Drizzle
