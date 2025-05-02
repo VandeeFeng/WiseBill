@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card"
-import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon } from "lucide-react"
+import { ArrowUpIcon, ArrowDownIcon } from "lucide-react"
 
 const stats = [
   {
