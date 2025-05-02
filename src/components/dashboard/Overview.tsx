@@ -24,9 +24,9 @@ const stats = [
 
 export function Overview() {
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
       {stats.map((stat) => (
-        <Card key={stat.name} className="p-6">
+        <Card key={stat.name} className="p-4 md:p-6">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-gray-500">{stat.name}</p>
             {stat.trend === "up" ? (
@@ -36,7 +36,7 @@ export function Overview() {
             )}
           </div>
           <div className="mt-2 flex items-baseline">
-            <p className="text-2xl font-semibold">{stat.value}</p>
+            <p className="text-xl md:text-2xl font-semibold">{stat.value}</p>
             <p
               className={`ml-2 text-sm font-medium ${
                 stat.trend === "up" ? "text-success" : "text-danger"

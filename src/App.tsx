@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { Dashboard } from '@/pages/Dashboard'
-import TransactionsPage from '@/pages/transactions/page'
+import TransactionsPage from '@/pages/TransactionsPage'
 import { AnalyticsPage } from '@/pages/AnalyticsPage'
 import { Toaster } from '@/components/ui/toaster'
 import { AuthorProvider } from '@/lib/AuthorContext'
