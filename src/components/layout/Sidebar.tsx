@@ -72,7 +72,7 @@ export function Sidebar() {
       <div className="relative">
         <div
           className={cn(
-            "flex h-screen flex-col border-r border-border bg-card font-sans",
+            "flex h-screen flex-col border-r border-border bg-card",
             "transition-all duration-200 ease-linear",
             isCollapsed ? "w-0 md:w-20" : "w-64",
             isMobileMenuOpen ? "fixed inset-y-0 left-0 z-20 w-64 translate-x-0" : "fixed inset-y-0 -translate-x-full md:translate-x-0 md:static md:flex",

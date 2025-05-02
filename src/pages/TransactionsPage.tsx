@@ -122,7 +122,7 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="container mx-auto px-2 md:px-4 py-4 md:py-10 font-sans">
+    <div className="container mx-auto px-2 md:px-4 py-4 md:py-10">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">Transactions</h1>
         <TransactionForm onSuccess={loadTransactions} />

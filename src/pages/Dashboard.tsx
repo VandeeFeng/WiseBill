@@ -4,7 +4,7 @@ import { AnalyticsPreview } from "@/components/dashboard/AnalyticsPreview"
 
 export function Dashboard() {
   return (
-    <div className="space-y-6 md:space-y-8 font-sans">
+    <div className="space-y-6 md:space-y-8">
       <div>
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
         <p className="text-muted-foreground">
