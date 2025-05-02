@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Chart as ChartJS,
@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   ChartData,
+  ChartOptions,
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
 import { getTransactions } from '@/lib/api'
@@ -28,6 +29,7 @@ ChartJS.register(
 )
 
 type MonthlyChartData = ChartData<'bar', number[], string>
+type BarChartOptions = ChartOptions<'bar'>;
 
 const formatDate = (dateStr: string) => {
   try {
@@ -57,6 +59,13 @@ const formatDate = (dateStr: string) => {
     return 'Invalid date'
   }
 }
+
+// Helper function to get computed CSS variables
+const getCssVar = (varName: string) => {
+  if (typeof window === 'undefined') return ''; // Guard for SSR
+  // Need to trim() because getPropertyValue returns the value with spaces/newlines sometimes
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+};
 
 export function AnalyticsPreview() {
   const { theme } = useTheme()
@@ -88,9 +97,15 @@ export function AnalyticsPreview() {
       // Sort months chronologically and get last 6 months
       const sortedMonths = Object.entries(monthlySpending)
         .sort((a, b) => {
-          const dateA = new Date(a[0])
-          const dateB = new Date(b[0])
-          return dateA.getTime() - dateB.getTime()
+          try {
+            const dateA = new Date(a[0])
+            const dateB = new Date(b[0])
+            if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0
+            return dateA.getTime() - dateB.getTime()
+          } catch (e) {
+            console.error("Error parsing date for sorting:", a[0], b[0])
+            return 0
+          }
         })
         .slice(-6)
 
@@ -107,50 +122,53 @@ export function AnalyticsPreview() {
     }
 
     loadData()
-  }, [theme, authorKey])
+  }, [authorKey, theme])
 
-  // Define chart options dynamically based on theme
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        labels: {
-          color: theme === 'dark' ? '#ffffff' : '#333333',
-        }
-      },
-      title: {
-        display: false,
-        color: theme === 'dark' ? '#ffffff' : '#333333',
-      },
-      tooltip: {
-        titleColor: theme === 'dark' ? '#ffffff' : '#333333',
-        bodyColor: theme === 'dark' ? '#dddddd' : '#666666',
-        backgroundColor: theme === 'dark' ? 'rgba(30,30,30,0.8)' : 'rgba(255,255,255,0.8)',
-        borderColor: theme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
-        borderWidth: 1,
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: theme === 'dark' ? '#ffffff' : '#666666',
+  // Calculate options using useMemo, dependent on theme (triggering CSS variable read)
+  const chartOptions = useMemo<BarChartOptions>(() => {
+    // Read CSS variables dynamically based on the current theme applied to the document
+    const tickColor = getCssVar('--chart-tick-color');
+    const gridColor = getCssVar('--chart-grid-color');
+    const legendLabelColor = getCssVar('--chart-legend-label-color'); // Read legend color again
+    const tooltipBgColor = getCssVar('--chart-tooltip-bg-color');
+    const tooltipBorderColor = getCssVar('--chart-tooltip-border-color');
+    const tooltipTitleColor = getCssVar('--chart-tooltip-title-color');
+    const tooltipBodyColor = getCssVar('--chart-tooltip-body-color');
+
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { 
+          display: false, // Keep legend hidden for preview
+          labels: { color: legendLabelColor } // Explicitly set legend label color
         },
-        grid: {
-          color: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        title: { 
+          display: false, 
+          color: legendLabelColor // Explicitly set title color
+        },
+        tooltip: {
+          backgroundColor: tooltipBgColor,
+          borderColor: tooltipBorderColor,
+          borderWidth: 1,
+          titleColor: tooltipTitleColor,
+          bodyColor: tooltipBodyColor,
         }
       },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: theme === 'dark' ? '#ffffff' : '#666666',
+      scales: {
+        x: { 
+          ticks: { color: tickColor }, 
+          grid: { color: gridColor } 
         },
-        grid: {
-          color: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        y: { 
+          beginAtZero: true, 
+          ticks: { color: tickColor }, 
+          grid: { color: gridColor } 
         }
       }
-    }
-  }
+    };
+  // Recalculate when theme changes, because CSS vars will have changed
+  }, [theme]);
 
   return (
     <div className="p-4 glass-card text-card-foreground rounded-lg shadow">
@@ -163,7 +181,9 @@ export function AnalyticsPreview() {
           </Link>
         </Button>
       </div>
-      <Bar data={monthlyData} options={chartOptions} />
+      <div style={{ height: '300px' }}>
+         <Bar data={monthlyData} options={chartOptions} key={theme} />
+      </div>
     </div>
   )
 } 
