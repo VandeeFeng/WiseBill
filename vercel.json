@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "devCommand": "npm run dev",
+  "functions": {
+    "api/*": {
+      "memory": 1024
+    }
+  },
+  "github": {
+    "silent": true
+  },
+  "env": {
+    "ENABLE_DB_SETUP": {
+      "type": "parameter",
+      "description": "Enable database setup on first deployment",
+      "default": "true"
+    }
+  },
+  "build": {
+    "env": {
+      "ENABLE_DB_SETUP": "true"
+    }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["drizzle/**"]
+      }
+    }
+  ]
+} 
