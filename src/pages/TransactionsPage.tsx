@@ -10,7 +10,7 @@ import {
 import { format } from 'date-fns'
 import { TransactionForm } from '@/components/transactions/TransactionForm'
 import { getTransactions } from '@/lib/api'
-import { Loader2, CreditCard, Calendar, Building2, FileText } from 'lucide-react'
+import { Loader2, Calendar, Building2 } from 'lucide-react'
 import type { Database } from '@/types/supabase'
 import { useAuthor } from '@/lib/AuthorContext'
 import { Card } from '@/components/ui/card'

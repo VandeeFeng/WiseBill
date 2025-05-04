@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { validateAuthorKey } from '@/lib/api';
 
 type AuthorContextType = {
   authorKey: string | null;
-  setAuthorKey: (key: string) => void;
+  setAuthorKey: (key: string) => Promise<boolean>;
   clearAuthorKey: () => void;
+  isValidatingKey: boolean;
 };
 
 const AuthorContext = createContext<AuthorContextType | undefined>(undefined);
@@ -36,6 +38,7 @@ export function AuthorProvider({ children }: { children: ReactNode }) {
     }
     return null;
   });
+  const [isValidatingKey, setIsValidatingKey] = useState(false);
 
   // Check for expiration on component mount and periodically
   useEffect(() => {
@@ -62,10 +65,25 @@ export function AuthorProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [authorKey]);
 
-  const setAuthorKey = (key: string) => {
-    setAuthorKeyState(key);
-    localStorage.setItem('author_key', key);
-    localStorage.setItem('author_key_timestamp', Date.now().toString());
+  const setAuthorKey = async (key: string): Promise<boolean> => {
+    try {
+      setIsValidatingKey(true);
+      // Validate the key before setting it
+      const isValid = await validateAuthorKey(key);
+      
+      if (isValid) {
+        setAuthorKeyState(key);
+        localStorage.setItem('author_key', key);
+        localStorage.setItem('author_key_timestamp', Date.now().toString());
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error validating author key:', error);
+      return false;
+    } finally {
+      setIsValidatingKey(false);
+    }
   };
 
   const clearAuthorKey = () => {
@@ -78,7 +96,8 @@ export function AuthorProvider({ children }: { children: ReactNode }) {
     <AuthorContext.Provider value={{ 
       authorKey, 
       setAuthorKey, 
-      clearAuthorKey 
+      clearAuthorKey,
+      isValidatingKey
     }}>
       {children}
     </AuthorContext.Provider>

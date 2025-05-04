@@ -34,7 +34,7 @@ const sampleTransactions = [
 
 // Create a function to validate keys on the server side via RPC
 // This avoids exposing the key in the frontend code
-async function validateAuthorKey(key: string): Promise<boolean> {
+export async function validateAuthorKey(key: string): Promise<boolean> {
   try {
     const { data, error } = await supabase.rpc('validate_author_key', { key_to_validate: key });
     if (error) {

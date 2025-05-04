@@ -9,9 +9,10 @@ import {
   DialogTitle,
   DialogFooter
 } from "@/components/ui/dialog";
-import { Lock, Unlock } from "lucide-react";
+import { Lock, Unlock, Loader2 } from "lucide-react";
 import { useAuthor } from "@/lib/AuthorContext";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 interface AuthorKeyModalProps {
   open: boolean;
@@ -19,21 +20,33 @@ interface AuthorKeyModalProps {
 }
 
 export function AuthorKeyModal({ open, onOpenChange }: AuthorKeyModalProps) {
-  const { authorKey, setAuthorKey, clearAuthorKey } = useAuthor();
+  const { authorKey, setAuthorKey, clearAuthorKey, isValidatingKey } = useAuthor();
   const [inputKey, setInputKey] = useState("");
+  const [keyError, setKeyError] = useState<string | null>(null);
   const { toast } = useToast();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (inputKey.trim()) {
-      setAuthorKey(inputKey.trim());
-      toast({
-        title: "Author Key Set",
-        description: "Your key has been set. Data will be fetched using this key."
-      });
-      setInputKey("");
-      onOpenChange(false);
+      setKeyError(null);
+      const isValid = await setAuthorKey(inputKey.trim());
+      
+      if (isValid) {
+        toast({
+          title: "Author Key Set",
+          description: "Your key has been set. Data will be fetched using this key."
+        });
+        setInputKey("");
+        onOpenChange(false);
+      } else {
+        setKeyError("Invalid author key. Please try again.");
+        toast({
+          title: "Invalid Key",
+          description: "The author key you entered is invalid.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -68,12 +81,31 @@ export function AuthorKeyModal({ open, onOpenChange }: AuthorKeyModalProps) {
                 type="password"
                 placeholder="Enter author key"
                 value={inputKey}
-                onChange={(e) => setInputKey(e.target.value)}
-                className="w-full"
+                onChange={(e) => {
+                  setInputKey(e.target.value);
+                  setKeyError(null);
+                }}
+                className={cn("w-full", keyError && "border-red-500")}
+                disabled={isValidatingKey}
               />
+              {keyError && (
+                <p className="text-sm text-red-500">{keyError}</p>
+              )}
             </div>
             <DialogFooter>
-              <Button type="submit" disabled={!inputKey.trim()}>Apply</Button>
+              <Button 
+                type="submit" 
+                disabled={!inputKey.trim() || isValidatingKey}
+              >
+                {isValidatingKey ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Validating...
+                  </>
+                ) : (
+                  "Apply"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         ) : (
