@@ -32,11 +32,14 @@ export function Sidebar() {
   const [authorModalOpen, setAuthorModalOpen] = useState(false)
   const location = useLocation()
   const { authorKey } = useAuthor()
+  const [isMobile, setIsMobile] = useState(false);
 
   // Auto-collapse sidebar on small screens
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
         setIsCollapsed(true);
       }
     };
@@ -72,13 +75,20 @@ export function Sidebar() {
       <div className="relative">
         <div
           className={cn(
-            "flex h-screen flex-col border-r border-border bg-card",
+            "flex h-screen flex-col bg-card",
             "transition-all duration-200 ease-linear",
+            isMobile && isMobileMenuOpen && "transition-transform duration-300 ease-out",
+            (!isCollapsed || isMobileMenuOpen) && "border-r border-border",
             isCollapsed ? "w-0 md:w-20" : "w-64",
-            isMobileMenuOpen ? "fixed inset-y-0 left-0 z-20 w-64 translate-x-0" : "fixed inset-y-0 -translate-x-full md:translate-x-0 md:static md:flex",
+            isMobileMenuOpen 
+              ? "fixed inset-y-0 left-0 z-20 w-64 translate-x-0" 
+              : "fixed inset-y-0 -translate-x-full md:translate-x-0 md:static md:flex"
           )}
         >
-          <div className="flex h-24 items-center justify-between border-b border-border px-6 py-4">
+          <div className={cn(
+            "flex h-24 items-center justify-between px-6 py-4",
+            (!isCollapsed || isMobileMenuOpen) && "border-b border-border"
+          )}>
             <span
               className={cn(
                 "text-2xl font-bold transition-opacity duration-200 red-glow",
@@ -118,7 +128,10 @@ export function Sidebar() {
             })}
           </nav>
           
-          <div className="border-t border-border p-3 mt-2">
+          <div className={cn(
+            "p-3 mt-2",
+            (!isCollapsed || isMobileMenuOpen) && "border-t border-border"
+          )}>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -161,7 +174,11 @@ export function Sidebar() {
       
       {/* Overlay for mobile menu */}
       <div 
-        className={`fixed inset-0 bg-background/80 z-10 md:hidden transition-all duration-200 ease-linear ${isMobileMenuOpen ? 'opacity-100 backdrop-blur-sm' : 'opacity-0 backdrop-blur-none pointer-events-none'}`}
+        className={`fixed inset-0 bg-background/80 z-10 md:hidden ${
+          isMobile && isMobileMenuOpen 
+            ? 'transition-opacity duration-300 ease-out opacity-100 backdrop-blur-sm' 
+            : 'transition-all duration-200 ease-linear opacity-0 backdrop-blur-none pointer-events-none'
+        }`}
         onClick={() => setIsMobileMenuOpen(false)}
       />
     </>
