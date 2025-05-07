@@ -90,26 +90,26 @@ export interface Database {
       bill: {
         Row: {
           id: string
-          银行名称: string
-          消费金额: number
-          消费时间: string
-          消费用途: string | null
+          account: string
+          amount: number
+          date: string
+          description: string | null
           created_at?: string
         }
         Insert: {
           id?: string
-          银行名称: string
-          消费金额: number
-          消费时间: string
-          消费用途?: string | null
+          account: string
+          amount: number
+          date: string
+          description?: string | null
           created_at?: string
         }
         Update: {
           id?: string
-          银行名称?: string
-          消费金额?: number
-          消费时间?: string
-          消费用途?: string | null
+          account?: string
+          amount?: number
+          date?: string
+          description?: string | null
           created_at?: string
         }
       }

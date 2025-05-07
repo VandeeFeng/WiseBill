@@ -7,7 +7,7 @@ export default function Home() {
       <div className="mx-auto max-w-5xl space-y-8">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight red-glow">
+            <h1 className="text-4xl font-bold tracking-tight">
               Wisebill
             </h1>
             <p className="text-lg text-muted-foreground">

@@ -118,9 +118,9 @@ export function Analytics() {
 
       // Process monthly data
       const monthlySpending = transactions.reduce((acc: { [key: string]: number }, curr) => {
-        const month = formatDate(curr.消费时间)
+        const month = formatDate(curr.date)
         if (month !== 'Invalid date') {
-          acc[month] = (acc[month] || 0) + parseFloat(String(curr.消费金额) || '0')
+          acc[month] = (acc[month] || 0) + parseFloat(String(curr.amount) || '0')
         }
         return acc
       }, {})
@@ -140,8 +140,8 @@ export function Analytics() {
 
       // Process category data
       const categorySpending = transactions.reduce((acc: { [key: string]: number }, curr) => {
-        const category = curr.消费用途 || 'Other'
-        acc[category] = (acc[category] || 0) + parseFloat(String(curr.消费金额) || '0')
+        const category = curr.description || 'Other'
+        acc[category] = (acc[category] || 0) + parseFloat(String(curr.amount) || '0')
         return acc
       }, {})
 

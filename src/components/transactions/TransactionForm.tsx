@@ -32,7 +32,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useAuthor } from '@/lib/AuthorContext'
 
 const formSchema = z.object({
-  bankName: z.string().min(1, 'Bank name is required'),
+  bankName: z.string().min(1, 'Account is required'),
   amount: z.string().min(1, 'Amount is required'),
   description: z.string().optional(),
   date: z.string().min(1, 'Date is required'),
@@ -69,10 +69,10 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
       }
       
       await createTransaction({
-        银行名称: values.bankName,
-        消费金额: parseFloat(values.amount),
-        消费时间: values.date,
-        消费用途: values.description || null,
+        account: values.bankName,
+        amount: parseFloat(values.amount),
+        date: values.date,
+        description: values.description || null,
       }, authorKey)
       
       toast({
@@ -119,14 +119,14 @@ export function TransactionForm({ onSuccess }: TransactionFormProps) {
                 name="bankName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bank</FormLabel>
+                    <FormLabel>Account</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select bank" />
+                          <SelectValue placeholder="Select account" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

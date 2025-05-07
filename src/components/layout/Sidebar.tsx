@@ -91,14 +91,14 @@ export function Sidebar() {
           )}>
             <span
               className={cn(
-                "text-2xl font-bold transition-opacity duration-200 red-glow",
+                "text-2xl font-bold transition-opacity duration-200",
                 isCollapsed && !isMobileMenuOpen && "opacity-0 hidden"
               )}
             >
               WiseBill
             </span>
             {isCollapsed && !isMobileMenuOpen ? (
-              <span className="mx-auto text-3xl font-bold red-glow md:block hidden">W</span>
+              <span className="mx-auto text-3xl font-bold md:block hidden">W</span>
             ) : (
               <ThemeToggle />
             )}

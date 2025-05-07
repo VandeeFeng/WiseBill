@@ -65,10 +65,10 @@ const formatAmount = (amount: string | number) => {
 
 interface Transaction {
   id: number
-  银行名称: string
-  消费金额: string | number
-  消费时间: string
-  消费用途: string | null
+  account: string
+  amount: string | number
+  date: string
+  description: string | null
 }
 
 export function RecentTransactions() {
@@ -106,7 +106,7 @@ export function RecentTransactions() {
         ) : (
           <div className="space-y-4">
             {transactions.map((transaction) => {
-              const category = transaction.消费用途 || "其他"
+              const category = transaction.description || "其他"
               const Icon = categoryIcons[category] || CreditCard
               return (
                 <div
@@ -118,15 +118,15 @@ export function RecentTransactions() {
                       <Icon className="h-5 w-5 text-gray-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">{transaction.银行名称}</p>
+                      <p className="text-sm font-medium">{transaction.account}</p>
                       <p className="text-xs text-gray-500">{category}</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-danger">
-                      -¥{formatAmount(transaction.消费金额)}
+                      -¥{formatAmount(transaction.amount)}
                     </p>
-                    <p className="text-xs text-gray-500">{formatDate(transaction.消费时间)}</p>
+                    <p className="text-xs text-gray-500">{formatDate(transaction.date)}</p>
                   </div>
                 </div>
               )

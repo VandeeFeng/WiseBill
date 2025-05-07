@@ -26,7 +26,10 @@ export default function TransactionsPage() {
     try {
       setLoading(true)
       const data = await getTransactions(authorKey || undefined)
-      setTransactions(data)
+      setTransactions(data.map(transaction => ({
+        ...transaction,
+        id: String(transaction.id)
+      })))
     } catch (error) {
       console.error('Failed to load transactions:', error)
     } finally {
@@ -102,17 +105,17 @@ export default function TransactionsPage() {
         {transactions.map((transaction) => (
           <Card key={transaction.id} className="p-4">
             <div className="flex justify-between items-start mb-2">
-              <div className="font-medium truncate max-w-[65%]">{transaction.消费用途}</div>
-              <div className="font-bold text-right">¥{formatAmount(transaction.消费金额)}</div>
+              <div className="font-medium truncate max-w-[65%]">{transaction.description}</div>
+              <div className="font-bold text-right">¥{formatAmount(transaction.amount)}</div>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
               <div className="flex items-center">
                 <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                {formatDate(transaction.消费时间)}
+                {formatDate(transaction.date)}
               </div>
               <div className="flex items-center">
                 <Building2 className="h-3.5 w-3.5 mr-1.5" />
-                {transaction.银行名称}
+                {transaction.account}
               </div>
             </div>
           </Card>
@@ -139,7 +142,7 @@ export default function TransactionsPage() {
           <TableHeader>
             <TableRow>
               <TableHead className="whitespace-nowrap">Date</TableHead>
-              <TableHead className="whitespace-nowrap">Bank</TableHead>
+              <TableHead className="whitespace-nowrap">Account</TableHead>
               <TableHead className="whitespace-nowrap">Description</TableHead>
               <TableHead className="text-right whitespace-nowrap">Amount</TableHead>
             </TableRow>
@@ -155,14 +158,14 @@ export default function TransactionsPage() {
               transactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell className="whitespace-nowrap">
-                    {formatDate(transaction.消费时间)}
+                    {formatDate(transaction.date)}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">{transaction.银行名称}</TableCell>
+                  <TableCell className="whitespace-nowrap">{transaction.account}</TableCell>
                   <TableCell className="max-w-[200px] truncate lg:max-w-none lg:whitespace-normal">
-                    {transaction.消费用途}
+                    {transaction.description}
                   </TableCell>
                   <TableCell className="text-right font-medium whitespace-nowrap">
-                    ¥{formatAmount(transaction.消费金额)}
+                    ¥{formatAmount(transaction.amount)}
                   </TableCell>
                 </TableRow>
               ))

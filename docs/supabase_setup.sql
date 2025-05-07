@@ -4,10 +4,10 @@
 -- 1. Create the bill table for storing transactions
 CREATE TABLE IF NOT EXISTS bill (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  银行名称 TEXT NOT NULL,
-  消费金额 NUMERIC(10, 2) NOT NULL,
-  消费时间 TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  消费用途 TEXT,
+  "Account" TEXT NOT NULL,
+  "Amount" NUMERIC(10, 2) NOT NULL,
+  "Date" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "Description" TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -69,7 +69,7 @@ VALUES ('author_key', 'YourSecretKey')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 
 -- 4. Create sample data (optional)
-INSERT INTO bill (银行名称, 消费金额, 消费时间, 消费用途)
+INSERT INTO bill ("Account", "Amount", "Date", "Description")
 VALUES 
   ('工商银行', 199.99, NOW() - INTERVAL '1 day', '购物'),
   ('招商银行', 88.50, NOW() - INTERVAL '2 days', '餐饮'),
