@@ -38,12 +38,10 @@ export async function validateAuthorKey(key: string): Promise<boolean> {
   try {
     const { data, error } = await supabase.rpc('validate_author_key', { key_to_validate: key });
     if (error) {
-      console.error("Error validating key:", error);
       return false;
     }
     return data === true;
   } catch (error) {
-    console.error("Error in validateAuthorKey:", error);
     return false;
   }
 }
@@ -68,16 +66,12 @@ export async function getTransactions(authorKey?: string) {
       .order('Date', { ascending: false });
 
     if (error) {
-      console.error("Error fetching transactions:", error);
       return sampleTransactions;
     }
 
     if (!data || data.length === 0) {
-      console.log("No data found in database");
       return sampleTransactions;
     }
-
-    console.log("Raw data from database:", data);
 
     return data.map(item => ({
       id: item.id,
@@ -88,7 +82,6 @@ export async function getTransactions(authorKey?: string) {
       created_at: item.created_at
     }));
   } catch (error) {
-    console.error("Error in getTransactions:", error);
     return sampleTransactions;
   }
 }
@@ -110,9 +103,43 @@ export async function createTransaction(transaction: Transaction, authorKey?: st
     const { error } = await supabase
       .from('bill')
       .insert([{
-        ...transaction,
-        date: new Date(transaction.date).toISOString()
+        Account: transaction.account,
+        Amount: transaction.amount,
+        Date: new Date(transaction.date).toISOString(),
+        Description: transaction.description
       }]);
+    
+    if (error) {
+      throw new Error(error.message);
+    }
+  } catch (error) {
+    throw error instanceof Error ? error : new Error("Unknown error occurred");
+  }
+}
+
+export async function updateTransaction(id: string, transaction: Partial<Transaction>, authorKey?: string) {
+  if (!authorKey) {
+    throw new Error("Valid author key is required to update transactions");
+  }
+  
+  try {
+    // Validate key through secure RPC call
+    const isValid = await validateAuthorKey(authorKey);
+    
+    if (!isValid) {
+      throw new Error("Valid author key is required to update transactions");
+    }
+    
+    // Update transaction if key is valid
+    const { error } = await supabase
+      .from('bill')
+      .update({
+        Account: transaction.account,
+        Amount: transaction.amount,
+        Date: transaction.date ? new Date(transaction.date).toISOString() : undefined,
+        Description: transaction.description
+      })
+      .eq('id', id);
     
     if (error) {
       throw new Error(error.message);
