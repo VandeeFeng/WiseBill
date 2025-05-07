@@ -17,10 +17,25 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 type Bill = Database['public']['Tables']['bill']['Row']
 
 const ITEMS_PER_PAGE = 20
+
+const DESCRIPTION_OPTIONS = [
+  { value: '交通', label: '交通' },
+  { value: '餐饮', label: '餐饮' },
+  { value: '购物', label: '购物' },
+  { value: '生活缴费', label: '生活缴费' },
+  { value: '其他', label: '其他' },
+]
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Bill[]>([])
@@ -197,7 +212,7 @@ export default function TransactionsPage() {
               const value = e.target.value.replace(/[^0-9.]/g, '')
               setEditValues({ ...editValues, amount: value ? parseFloat(value) : undefined })
             }}
-            className="w-[100px]"
+            className="w-[80px]"
           />
         )
       case 'date':
@@ -211,11 +226,29 @@ export default function TransactionsPage() {
         )
       case 'description':
         return (
-          <Input
-            value={editValues.description === null ? '' : editValues.description ?? ''}
-            onChange={(e) => setEditValues({ ...editValues, description: e.target.value })}
-            className="w-[200px]"
-          />
+          <div className="flex gap-2">
+            <Select
+              value={editValues.description || ''}
+              onValueChange={(value) => setEditValues({ ...editValues, description: value })}
+            >
+              <SelectTrigger className="w-[110px]">
+                <SelectValue placeholder="选择类型" />
+              </SelectTrigger>
+              <SelectContent>
+                {DESCRIPTION_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              value={editValues.description === null ? '' : editValues.description ?? ''}
+              onChange={(e) => setEditValues({ ...editValues, description: e.target.value })}
+              className="w-[110px]"
+              placeholder="自定义描述"
+            />
+          </div>
         )
       default:
         return transaction[field]
@@ -295,7 +328,7 @@ export default function TransactionsPage() {
                   <TableCell className="max-w-[200px] truncate lg:max-w-none lg:whitespace-normal">
                     {renderEditableCell(transaction, 'description')}
                   </TableCell>
-                  <TableCell className="text-right font-medium whitespace-nowrap">
+                  <TableCell className="text-right font-medium whitespace-nowrap pr-12">
                     {renderEditableCell(transaction, 'amount')}
                   </TableCell>
                   {isEditMode && editingId === transaction.id && (
