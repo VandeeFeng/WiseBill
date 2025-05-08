@@ -167,7 +167,10 @@ export default function TransactionsPage() {
 
   const handleSave = async (id: string) => {
     try {
-      await updateTransaction(id, editValues, authorKey || undefined)
+      // Format date to YYYY-MM-DD HH:mm format
+      const formattedDate = editValues.date ? format(new Date(editValues.date), 'yyyy-MM-dd HH:mm') : undefined
+      
+      await updateTransaction(id, { ...editValues, date: formattedDate }, authorKey || undefined)
       await loadTransactions()
       setEditingId(null)
       toast({
